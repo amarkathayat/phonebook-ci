@@ -13,11 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
+
       - name: Install dependencies
         run: npm install
+
       - name: Check style
         run: echo "No lint configured yet"
 
@@ -25,11 +28,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
+
       - name: Install dependencies
         run: npm install
+
       - name: Run tests
         run: echo "No tests configured yet"
 
@@ -37,11 +43,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
+
       - name: Install dependencies
         run: npm install
+
       - name: Build
         run: echo "No build step needed"
 
@@ -52,3 +61,44 @@ jobs:
     steps:
       - name: Trigger Render deployment
         run: curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+
+  notify_success:
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' && needs.deploy.result == 'success' }}
+    steps:
+      - name: Send success notification
+        uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: success
+          title: "Phonebook Deployment Successful!"
+          description: |
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Message: ${{ github.event.head_commit.message }}
+            Author: ${{ github.actor }}
+          color: 0x00ff00
+
+  notify_failure:
+    needs: [lint, unit_tests, build, deploy]
+    runs-on: ubuntu-latest
+    if: ${{ always() && (needs.lint.result == 'failure' || needs.unit_tests.result == 'failure' || needs.build.result == 'failure' || needs.deploy.result == 'failure') }}
+    steps:
+      - name: Send failure notification
+        uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: failure
+          title: "Phonebook Build Failed!"
+          description: |
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Message: ${{ github.event.head_commit.message || github.event.pull_request.title }}
+            Author: ${{ github.actor }}
+            Workflow Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          color: 0xff0000
