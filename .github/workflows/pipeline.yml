@@ -1,0 +1,54 @@
+name: Deployment pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+      - name: Install dependencies
+        run: npm install
+      - name: Check style
+        run: echo "No lint configured yet"
+
+  unit_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
+        run: echo "No tests configured yet"
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: echo "No build step needed"
+
+  deploy:
+    needs: [lint, unit_tests, build]
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' }}
+    steps:
+      - name: Trigger Render deployment
+        run: curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
