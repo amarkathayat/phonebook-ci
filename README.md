@@ -1,6 +1,6 @@
 # phonebook-ci
 
-This repository was created for Full Stack Open Part 11 Exercise 21.
+This repository was created for Full Stack Open Part 11 Exercise 21 and 22.
 
 ## Links
 
