@@ -1,14 +1,15 @@
 # phonebook-ci
 
-This repository was created for Full Stack Open Part 11 Exercise 21 and 22.
+This repository was created for Full Stack Open Part 11 Exercise 21.
+I used the phonebook application instead of pokedex.
 
 ## Links
 
 ### Deployed application
 https://phonebook-ci-yf75.onrender.com
 
-### CI/CD Repository
+### Exercise repository
 https://github.com/amarkathayat/phonebook-ci
 
-### Original App Repository (previous exercises)
-This repository also contains the original phonebook application used in previous exercises.
+### Previous exercises repository
+https://github.com/amarkathayat/phonebook-ci
